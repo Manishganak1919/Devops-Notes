@@ -1,0 +1,38 @@
+________________________________________________________________
+                 VIRTUAL PRIVATE CLOUD (VPC)
+________________________________________________________________
+
+VPC is our private cloud within AWS public cloud.
+It is an isolated, customizable network within AWS,
+where you can manage and create your own resources and services.
+
+________________________________________________________________
+                 COMPONENTS OF VPC
+________________________________________________________________
+
+1. Internet Gateway (IG)
+2. Route Table
+3. Subnets
+4. NACLs (Network Access Control Lists)
+5. Security Groups
+6. NAT Gateway (Network Address Translation)
+
+________________________________________________________________
+                 INTERNET GATEWAY (IG)
+________________________________________________________________
+
+- Allows communication between your VPC and the Internet.
+- If a VPC does not have an IG, resources in the VPC cannot be accessed from the Internet.
+- Supports both IPv4 and IPv6 traffic.
+- IG is not Availability Zone specific.
+
+________________________________________________________________
+                 NAT GATEWAY (Network Address Translation)
+________________________________________________________________
+
+- Used for private subnets; by default, it allows only outbound traffic.
+- EC2 instances (or other resources) inside a private subnet 
+  can send traffic to the Internet (e.g., downloading updates or calling public APIs), 
+  but the Internet cannot directly access those instances.
+- Supports protocols like TCP, UDP, and ICMP.
+- Each NAT Gateway is created in a specific Availability Zone.
