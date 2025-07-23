@@ -55,5 +55,65 @@ Command: aws s3 ls s3://your-bucket-name/
 Command: aws s3 mv s3://source-bucket/path/to/file.txt s3://destination-bucket/path/to/file.txt
 
 
+___________________________________________________________________________
+                          TO CREATE A BUCKET IN S3
+___________________________________________________________________________
+
+1. Search for **S3** in the AWS Management Console.
+2. Click on **"Create bucket"**.
+3. Enter a unique **bucket name**.
+4. Choose whether to **block public access** or allow it (based on your use case).
+5. **Disable or enable ACLs** (Access Control Lists).
+6. Optionally enable **bucket versioning**.
+7. Click **"Create bucket"** to complete the setup.
+
+___________________________________________________________________________
+
+
+___________________________________________________________________________
+                        HOW TO UPLOAD OBJECTS TO S3
+___________________________________________________________________________
+
+1. Select the desired **S3 bucket**.
+2. Click on the **"Upload"** button.
+3. Choose the **files** you want to upload.
+4. You can **upload multiple files** together.
+5. You can also **select folders**.
+6. **Folders must be uploaded one by one** (currently, bulk folder upload may be limited).
+7. Once selected, the **objects will be uploaded** to the bucket.
+
+___________________________________________________________________________
+
+
+___________________________________________________________________________
+                          STATIC WEB HOSTING USING S3
+___________________________________________________________________________
+
+1. Search for **Tooplet** in the browser.
+2. Download any web application template from the site.
+3. Extract all the files locally.
+4. Create a new **S3 bucket**.
+5. **Unblock public access** for the bucket.
+6. Upload all the **extracted files** into the bucket.
+7. Ensure the upload includes an **index.html** file.
+8. Go to the **bucket's Properties** tab.
+9. Scroll to **Static Website Hosting** and enable it.
+   - This will generate a link to host your web application.
+10. Go to the **Permissions** tab.
+11. Click on **Policy Generator**.
+12. In the Policy Generator:
+    - Choose **S3 Bucket Policy**.
+    - Select **Action**: `Get Object`
+    - For **Principal**, enter: `*`
+    - For **ARN**, use: `arn:aws:s3:::your-bucket-name/*`
+13. Click **Generate Policy**.
+14. Copy the generated JSON policy and **paste it** into the **Bucket Policy Editor** under the Permissions tab.
+15. Save the bucket policy.
+16. Copy the **static website hosting link** provided under Properties.
+17. Paste it in the browser to view your hosted site.
+    - If the link doesn't work, try using `http://` instead of `https://`.
+18. ✅ Your static web hosting is now complete.
+
+___________________________________________________________________________
 
 
