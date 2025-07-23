@@ -1,0 +1,59 @@
+___________________________________________________________________________
+                              IMPORTANT POINTS FOR S3
+___________________________________________________________________________
+
+- S3 stands for **Simple Storage Service**.
+- Launched in the year **2006**.
+- Used to **store independent data**.
+- S3 is **region-specific**, not global.
+- We create **buckets**, and store data inside these buckets.
+- Data is stored in the form of **objects** (files + metadata).
+
+___________________________________________________________________________
+                          DIFFERENCE BETWEEN EBS AND S3
+___________________________________________________________________________
+
+EBS (Elastic Block Store):
+- Provides storage for EC2 instances.
+- **Availability Zone specific**.
+- Best for **storing small sets of data**.
+- **Faster access** compared to S3.
+- Storage can be extended **up to 16 TiB**.
+- Works like a virtual hard drive.
+
+S3 (Simple Storage Service):
+- Used to **store independent/unstructured data**.
+- **Region-specific**.
+- Suitable for storing **large datasets** (e.g., backups, media files).
+- **Slower access** compared to EBS.
+- Can store **unlimited data**.
+- Objects can be up to **5 TB** in size.
+
+___________________________________________________________________________
+                              S3 RULES AND POLICIES
+___________________________________________________________________________
+
+1. **Bucket Name** must be **globally unique** (no two buckets across AWS can have the same name).
+2. **Each bucket is associated with a specific region**.
+3. You can upload an object of size **up to 5 TB**.
+4. Bucket and object access is controlled using:
+   - **IAM policies**
+   - **Bucket policies**
+   - **Access Control Lists (ACLs)**
+
+___________________________________________________________________________
+                              ACCESS USING CLI
+___________________________________________________________________________
+
+1. **List all S3 buckets**  
+   Command: aws s3 ls
+
+2. **List contents of a specific bucket**  
+Command: aws s3 ls s3://your-bucket-name/
+
+3. **Move (copy + delete) a file from one bucket to another**  
+Command: aws s3 mv s3://source-bucket/path/to/file.txt s3://destination-bucket/path/to/file.txt
+
+
+
+
