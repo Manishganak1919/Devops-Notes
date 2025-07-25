@@ -1,0 +1,239 @@
+
+# Linux Group Management Commands
+
+1. Create a Group
+-----------------
+sudo groupadd groupname
+Example:
+sudo groupadd developers
+
+2. Delete a Group
+-----------------
+sudo groupdel groupname
+Example:
+sudo groupdel developers
+
+3. Rename a Group
+-----------------
+sudo groupmod -n newname oldname
+Example:
+sudo groupmod -n devs developers
+
+4. Add a User to a Group
+------------------------
+sudo usermod -aG groupname username
+Example:
+sudo usermod -aG developers john
+
+5. Remove a User from a Group
+-----------------------------
+sudo gpasswd -d username groupname
+Example:
+sudo gpasswd -d john developers
+
+6. Change Group ID (GID)
+------------------------
+sudo groupmod -g newGID groupname
+Example:
+sudo groupmod -g 505 developers
+
+7. View All Groups
+------------------
+getent group
+OR
+cat /etc/group
+
+8. View Groups of a Specific User
+---------------------------------
+groups username
+Example:
+groups john
+
+9. Set a Group Password (rarely used)
+-------------------------------------
+sudo gpasswd groupname
+
+10. Create User with a Primary Group
+------------------------------------
+sudo useradd -g groupname username
+Example:
+sudo useradd -g developers alice
+
+
+
+# Linux File Permission Management
+
+1. Types of Permissions
+-----------------------
+- Read (r)     = 4
+- Write (w)    = 2
+- Execute (x)  = 1
+
+Binary Format:
+--------------
+| Read | Write | Execute | Binary | Symbol |
+|------|-------|---------|--------|--------|
+|  1   |   1   |    1    |  7     |  rwx   |
+|  1   |   1   |    0    |  6     |  rw-   |
+|  1   |   0   |    1    |  5     |  r-x   |
+|  1   |   0   |    0    |  4     |  r--   |
+|  0   |   1   |    1    |  3     |  -wx   |
+|  0   |   1   |    0    |  2     |  -w-   |
+|  0   |   0   |    1    |  1     |  --x   |
+|  0   |   0   |    0    |  0     |  ---   |
+
+2. Who Has These Permissions
+----------------------------
+- u = owner
+- g = group
+- o = others
+
+3. Check Permissions of a File
+------------------------------
+ls -l file-name
+Example:
+ls -l a.txt
+
+4. Change Permissions
+---------------------
+chmod u+rwx file-name
+chmod g+rw  file-name
+chmod o+x   file-name
+
+To add permissions for multiple users in one command:
+chmod u+r,g+w,o+x file-name
+
+To remove permissions in one command:
+chmod u-r,g-w,o-x file-name
+
+To change permissions using numbers:
+chmod 777 file-name  # rwxrwxrwx
+
+To assign/remove same permission for multiple users:
+chmod a+rwx file-name
+chmod a-rw  file-name
+
+To change permission of directory and its contents:
+chmod -R u+rwx dir-name
+chmod -R g-w   dir-name
+chmod -R a+rwx dir-name
+
+5. Change Owner of File/Directory
+---------------------------------
+sudo chown new_owner file-name
+sudo chown new_owner:new_group file-name
+
+6. Numeric Shortcut Examples
+----------------------------
+chmod 755 file-name  # rwxr-xr-x
+chmod 644 file-name  # rw-r--r--
+chmod 700 file-name  # rwx------
+
+
+
+===============================
+System Information Commands
+===============================
+uname -a            : Detailed system configuration (kernel version, system architecture, OS type)
+df -h               : Show disk usage in human-readable format
+du -h               : Show size of folders/files in human-readable format
+top                 : Live CPU monitoring
+free -h             : Show memory usage in human-readable format
+lsblk               : List block devices
+systemctl           : Manage system services and processes
+
+===============================
+Networking Commands
+===============================
+ipconfig            : IP configuration
+ip addr / ip address: IP configuration
+ping <url>          : Check connectivity (e.g., ping www.google.com)
+wget <url>          : Download files from the internet
+curl <url>          : Download web page
+locate file-name    : Find a file by name
+pwd                 : Print working directory (current path)
+
+===============================
+System File Directories
+===============================
+/bin    : Essential binaries (e.g., mv, cp, ls)
+/sbin   : System binaries (e.g., useradd, groupadd)
+/etc    : Configuration files (e.g., /etc/passwd)
+/dev    : Device files (e.g., /dev/xvdc)
+/home   : User home directories (e.g., /home/charan)
+/root   : Root user's home directory
+/lib    : Shared libraries
+/media  : Mount points for external media (e.g., USB)
+/tmp    : Temporary files
+/var    : Variable data (e.g., logs, cache)
+/boot   : Boot loader files
+/usr    : User & system related files
+
+===============================
+File Compression
+===============================
+
+TAR:
+To create tar:
+  tar cvf <archive-name>.tar file1 file2
+To extract all:
+  tar xvf <archive-name>.tar
+To extract specific:
+  tar xvf <archive-name>.tar file1 file2
+
+ZIP:
+To create zip:
+  zip <archive-name>.zip file1 file2
+To extract:
+  unzip <archive-name>.zip
+To extract specific:
+  unzip <archive-name>.zip file1
+
+GZIP:
+To create gzip:
+  gzip <archive-name>.tar
+  gzip <archive-name>.zip
+To extract:
+  gunzip <archive-name>.gz
+
+ZIP vs GZIP:
+  zip: multiple files, .zip, unzip
+  gzip: one file, .gz/.tar.gz, gunzip
+
+Resize file:
+  truncate -s 50k file-name
+
+Compress all except one:
+  zip -r <archive>.zip * -x file-name.txt
+
+Task:
+  Create files, compress into archive, extract specific files, resize and verify compression
+
+===============================
+Permissions & Group Management
+===============================
+
+Change directory permissions recursively:
+  chmod -R u+rwx dir-name
+  chmod -R g+wx dir-name
+  chmod -R a+rwx dir-name
+
+Change ownership:
+  chown -R <owner> dir-name
+  chgrp <group> file-name
+
+Examples:
+  chgrp linux /home/anjum/demo/test/a.txt
+
+Task-1:
+  Create user1, user2
+  Create a.txt as user1, b.txt as user2
+  Allow user2 to edit a.txt via group permissions
+
+Task-2:
+  Create dir "demo"
+  Create files and users: jerry, tom, bob
+  Add users to group "devops"
+  Set group and user ownership
+  Allow group execution access
+
