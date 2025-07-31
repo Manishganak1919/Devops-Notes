@@ -1,0 +1,162 @@
+______________________________________________________________________________________
+
+             HOW TO DEPLOY MAVEN PROJECT TO NEXUS REPOSITORY
+______________________________________________________________________________________
+
+=======================
+        PART - 01
+=======================
+
+1. Create two EC2 Instances:
+   - One for Maven
+   - One for Nexus (expose port 8081)
+
+   Go to: EC2 → Security Groups → Edit Inbound Rules
+   Add Rule:
+     Type: Custom TCP
+     Port Range: 8081
+     Source: 0.0.0.0/0
+   Save.
+
+2. Connect to the Nexus EC2 instance and follow these steps:
+
+   a. Create a script:
+      nano first.sh
+
+   b. Add the following line (replace <sonatype_download_link>):
+      wget -O app.tar <sonatype_download_link>
+
+      To get the link:
+        - Visit: https://help.sonatype.com/en/download.html
+        - Choose “Unix/Linux x86-64”
+        - Right-click and copy the link address.
+
+   c. Add the following line in first.sh:
+      tar xvf app.tar
+
+   d. Save and exit (Ctrl + O, Enter, Ctrl + X)
+
+   e. Make it executable:
+      chmod a+x first.sh
+
+   f. Run the script:
+      ./first.sh
+
+   g. After extraction, run:
+      ls
+
+   h. Navigate to:
+      cd /home/ubuntu/nexus-<version>/bin
+
+   i. Start Nexus:
+      bash ./nexus start
+
+   j. Open browser:
+      http://<public_ip>:8081
+
+----------------------------------------------------------------------------------------
+                   SET UP THE NEXUS WEB UI
+----------------------------------------------------------------------------------------
+
+1. Click on the → icon (top-left)
+2. Click “Login”
+3. Username: admin
+4. Password: 
+   - Go to terminal, run:
+     cat /home/ubuntu/nexus-<version>/sonatype-work/nexus3/admin.password
+   - Copy the output (before "ubuntu")
+
+5. Paste the password and login.
+6. Disable “Allow anonymous access”
+7. Click OK to finish setup.
+8. Click “Settings” → “Repositories” → “Create repository”
+9. Choose: `maven2 (hosted)`
+10. Fill the details:
+    - Repository Name: your choice
+    - Version Policy: mixed
+    - Deployment Policy: allow redeploy
+11. Click “Create Repository”
+12. Copy the generated repository URL.
+
+=======================
+        PART - 02
+=======================
+
+1. Connect to Maven EC2 instance.
+2. Create script:
+   nano first.sh
+
+3. Add the following lines:
+   sudo apt update
+   sudo apt install openjdk-17-jdk -y
+   sudo apt install maven -y
+   git clone https://github.com/spring-petclinic/spring-framework-petclinic.git
+
+4. Save and exit (Ctrl + O, Enter, Ctrl + X)
+5. Make script executable:
+   chmod a+x first.sh
+6. Run the script:
+   ./first.sh
+7. Wait until download is complete.
+8. Run:
+   ls
+   cd spring-framework-petclinic
+
+9. Edit pom.xml:
+   nano pom.xml
+
+   Add the following block before <project> tag or inside <project>:
+
+   <distributionManagement>
+     <repository>
+       <id>nexus-releases</id>
+       <name>Nexus Release Repository</name>
+       <url>http://<your_nexus_ip>:8081/repository/<your_repo_name></url>
+     </repository>
+     <snapshotRepository>
+       <id>nexus-snapshots</id>
+       <name>Nexus Snapshot Repository</name>
+       <url>http://<your_nexus_ip>:8081/repository/<your_repo_name></url>
+     </snapshotRepository>
+   </distributionManagement>
+
+10. Save and exit pom.xml.
+
+11. Go back:
+    cd ..
+    ls -a
+
+12. Go into `.m2` directory:
+    cd .m2
+
+13. Create settings.xml:
+    nano settings.xml
+
+    Paste the following:
+
+    <settings>
+      <servers>
+        <server>
+          <id>nexus-releases</id>
+          <username>admin</username>
+          <password><your_admin_password></password>
+        </server>
+        <server>
+          <id>nexus-snapshots</id>
+          <username>admin</username>
+          <password><your_admin_password></password>
+        </server>
+      </servers>
+    </settings>
+
+14. Save and exit settings.xml.
+
+15. Go back to the project folder:
+    cd ../spring-framework-petclinic
+
+16. Run deployment:
+    mvn deploy
+
+17. Final check:
+    Go to Nexus → Browse → Your Repository
+    You should see your deployed artifacts.
