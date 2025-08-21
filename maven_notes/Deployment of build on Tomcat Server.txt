@@ -1,0 +1,129 @@
+===============================================================================
+                DEPLOYMENT OF BUILD INTO TOMCAT SERVER
+===============================================================================
+
+1. Create two instances: one for "Maven Instance" and another for "Tomcat Server".
+   - Use a new key-pair.
+   - Select Ubuntu as the operating system.
+   - Choose "t2.medium" as the instance type.
+   - Allow port 8080 in the security group.
+
+2. Connect to the "Maven Instance".
+
+3. Create a script file named "first.sh":
+   - Add the following commands into first.sh:
+
+     sudo apt update
+     sudo apt install openjdk-17-jdk -y
+     sudo apt install maven -y
+     git clone <spring-framework-petclinic-url>
+
+4. Give execute permission and run the script:
+   - chmod a+x first.sh
+   - ./first.sh
+
+5. After successful installation, generate an SSH key pair in the Maven instance:
+   - ssh-keygen
+
+6. Press Enter three times to skip adding a passphrase.
+
+7. List hidden files and navigate to the .ssh folder:
+   - ls -a
+   - cd .ssh
+   - ls -a
+   - You should see "id_ed25519.pub".
+   - To display the public key, run:
+     sudo cat id_ed25519.pub
+    
+    output: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHdKntsaOJ7ROiFO6Ae169t4aRyIrOTHpolscI0U5DOh ubuntu@ip-172-31-2-242
+
+8. Copy the public key and set it up on the Tomcat EC2 instance.
+
+__________________________
+        IN TOMCAT SERVER
+__________________________
+
+9. Connect to the Tomcat EC2 instance and create a script file to install Tomcat:
+   - Add the following commands into the script:
+
+     wget -O app.zip https://dlcdn.apache.org/tomcat/tomcat-10/v10.1.44/bin/apache-tomcat-10.1.44.zip || <tomcat-10-download-link>
+     sudo apt install unzip -y
+     unzip app.zip
+     sudo apt update
+     sudo apt install openjdk-17-jdk -y
+
+10. Give execute permission and run the script.
+
+11. If installation is successful, run "ls -a".
+
+12. Go inside the ".ssh" folder.
+
+13. Open the authorized_keys file and paste the Maven instance public key:
+    - nano authorized_keys
+    - Paste the output from "sudo cat id_ed25519.pub" (generated in Maven instance).
+
+14. Go back to the home directory and list files:
+    - cd ..
+    - ls
+
+15. Go inside "apache-tomcat-10.1.44" and list files:
+    - cd apache-tomcat-10.1.44
+    - ls
+
+16. Give execute permission to "startup.sh" and "catalina.sh":
+    - chmod +x bin/startup.sh
+    - chmod +x bin/catalina.sh
+
+17. Go back to the Maven instance. Exit the ".ssh" folder and run "ls".
+
+18. Connect to the Tomcat server from Maven instance:
+    - ssh ubuntu@<public_ip_of_tomcat_server>
+    - Type "yes" when asked for fingerprint confirmation.
+    - Example output: Last login: Thu Aug 21 09:25:45 2025 from 13.239.158.3
+
+19. In Tomcat instance, navigate to the bin folder:
+    - cd ~/apache-tomcat-10.1.44/bin
+
+20. Start Tomcat:
+    - ./startup.sh start
+    - Output: Tomcat started
+
+21. Open in browser:  
+    http://<public_ip_of_tomcat>:8080  
+    You should see the Apache Tomcat page.
+
+22. Go back one directory from "bin" and list files:
+    - cd ..
+    - ls
+    - You should see "webapps" folder.
+
+23. Go inside "webapps" and check the path:
+    - cd webapps
+    - pwd
+
+24. Go back to Maven instance and exit from root directory:
+    - exit
+    - ls
+
+25. Navigate to the spring project:
+    - cd spring-framework-petclinic
+    - ls
+
+26. If you see "target" folder, continue. If not, run:
+    - mvn package
+
+27. Go inside "target" folder and verify "petclinic.war":
+    - cd target
+    - ls
+
+28. Copy "petclinic.war" to Tomcat webapps folder:
+    - scp petclinic.war ubuntu@<public_ip_of_tomcat>:<full_path_of_webapps>
+
+29. Verify "petclinic.war" is present in the Tomcat instance "webapps" folder.
+
+30. Open in browser:  
+    http://<public_ip_of_tomcat>:8080/petclinic/  
+    You should see the Petclinic application running on Tomcat.
+
+   
+   
