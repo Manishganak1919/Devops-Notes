@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('clone the project') {
+            steps {
+                git branch 'main', url 'httpsgithub.comspring-petclinicspring-framework-petclinic.git'
+            }
+        }
+        stage('Generating war package') {
+            steps {
+                sh 'mvn package'
+            }
+        }
+        stage('performing static code analysis using sonarqube') {
+            steps {
+                withSonarQubeEnv(installationName 'sonarqube', credentialsId 'jenkins-sonar-token')
+                {
+                    sh 'mvn clean verify sonarsonar'
+                }
+            }
+        }
+        stage('Deploying .war into nexus repo') {
+            steps {
+               nexusArtifactUploader artifacts [[artifactId 'spring-framework-petclinic', 
+               classifier '', 
+               file 'targetpetclinic.war', 
+               type 'war']], credentialsId 'nexus-credentials', 
+               groupId 'org.springframework.samples', 
+               nexusUrl '3.107.68.2208081', 
+               nexusVersion 'nexus3', 
+               protocol 'http', 
+               repository 'spring-framework-project', 
+               version '6.2.8'
+            }
+        }
+        stage('Deploy .war file into tomcat server') {
+            steps {
+                sshagent(['tomcat-credentials']) {
+                      sh 'scp -o StrictHostKeyChecking=no targetpetclinic.war ubuntu@3.106.165.160homeubuntuapache-tomcat-10.1.44webapps'
+              }
+            }
+        }
+    }
+}
